@@ -103,6 +103,8 @@ class StreamManager:
         self.detector = None
         self._init_detector()
 
+        self.config_dirty = False
+
         # Start dedicated background capture & inference worker
         self.running = True
         self.worker_thread = threading.Thread(
@@ -125,22 +127,31 @@ class StreamManager:
     def change_source(self, source_type: str, source_path: str):
         with self.lock:
             self.next_source = (source_type, source_path)
+            self.config_dirty = True
             print(f"[StreamManager] Source change requested -> {source_type}: {source_path}")
 
     def update_config(self, model=None, conf=None, iou=None, tracking=None, loop=None):
         with self.lock:
             if model and model != self.model_name:
                 self.next_model = model
+                self.config_dirty = True
             if conf is not None:
-                self.conf_threshold = float(conf)
-                if self.detector:
-                    self.detector.conf_threshold = self.conf_threshold
+                new_conf = float(conf)
+                if abs(new_conf - self.conf_threshold) > 0.001:
+                    self.conf_threshold = new_conf
+                    if self.detector:
+                        self.detector.conf_threshold = self.conf_threshold
+                    self.config_dirty = True
             if iou is not None:
-                self.iou_threshold = float(iou)
-                if self.detector:
-                    self.detector.iou_threshold = self.iou_threshold
+                new_iou = float(iou)
+                if abs(new_iou - self.iou_threshold) > 0.001:
+                    self.iou_threshold = new_iou
+                    if self.detector:
+                        self.detector.iou_threshold = self.iou_threshold
+                    self.config_dirty = True
             if tracking is not None:
                 self.enable_tracking = bool(tracking)
+                self.config_dirty = True
             if loop is not None:
                 self.loop = bool(loop)
 
@@ -258,6 +269,12 @@ class StreamManager:
             # Handle Static Image
             if current_type == "image":
                 if static_img is not None:
+                    # Check if config (confidence, iou, model) was changed by the user
+                    with self.lock:
+                        if self.config_dirty:
+                            self.config_dirty = False
+                            cached_jpeg = None
+
                     if cached_jpeg is not None:
                         # Stream the cached annotated JPEG smoothly at 30 FPS without re-inferencing
                         with self.lock:
