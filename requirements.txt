@@ -1,0 +1,15 @@
+# Core Computer Vision & AI Frameworks
+opencv-python>=4.8.0,<5.0.0
+ultralytics>=8.3.0
+numpy>=1.24.0
+
+# PyTorch (For CUDA GPU acceleration, install with: pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121)
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Web Dashboard Backend
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+pydantic>=2.0.0
+python-multipart>=0.0.6
+

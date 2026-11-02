@@ -1,0 +1,20 @@
+# Weights
+weights/
+*.weights
+*.pt
+
+# Python
+__pycache__/
+*.pyc
+
+# Outputs, Recordings & Media
+output/
+screenshots/
+uploads/
+Recording*.mp4
+*.mkv
+*.avi
+
+# Virtual environments
+venv/
+.env/

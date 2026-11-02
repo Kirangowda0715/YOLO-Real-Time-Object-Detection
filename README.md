@@ -75,8 +75,20 @@ OpenCV dnn module supports running inference on pre-trained deep learning models
   <p><code>python real_time_yolo_detector2.py</code></p>
 </ol>
 <ol start="5">
-  <li>To use in real-time on webcam</li>
+  <li>To view detection on sample room image</li>
   <p><code>python real_time_yolo_webcam.py</code></p>
+</ol>
+<ol start="6">
+  <li>To use in real-time on live webcam</li>
+  <p><code>python real_time_yolo_live_webcam.py</code></p>
+</ol>
+<ol start="7">
+  <li>Modern YOLO11 Real-Time Detection & Object Tracking (NVIDIA RTX GPU Accelerated)</li>
+  <p><code>python detect.py</code></p>
+</ol>
+<ol start="8">
+  <li>AI Web Dashboard UI (Browser-based, Drag & Drop Uploads, Live GPU Telemetry)</li>
+  <p><code>python web_app.py</code> (Open <a href="http://localhost:8000">http://localhost:8000</a>)</p>
 </ol>
 
 ## Graphical User Interface:

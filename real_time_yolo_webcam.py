@@ -6,8 +6,7 @@ net = cv2.dnn.readNet("weights/yolov3.weights", "cfg/yolov3.cfg")
 classes = []
 with open("coco.names", "r") as f:
     classes = [line.strip() for line in f.readlines()]
-layer_names = net.getLayerNames()
-output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
+output_layers = net.getUnconnectedOutLayersNames()
 colors = np.random.uniform(0, 255, size=(len(classes), 3))
 
 # Loading image
@@ -52,7 +51,7 @@ for i in range(len(boxes)):
     if i in indexes:
         x, y, w, h = boxes[i]
         label = str(classes[class_ids[i]])
-        color = colors[i]
+        color = colors[class_ids[i]]
         cv2.rectangle(img, (x, y), (x + w, y + h), color, 1)
         cv2.putText(img, label, (x, y + 30), font, 3, color, 2)
 

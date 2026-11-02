@@ -7,8 +7,7 @@ net = cv2.dnn.readNet("weights/yolov3-tiny.weights", "cfg/yolov3-tiny.cfg")
 classes = []
 with open("coco.names", "r") as f:
     classes = [line.strip() for line in f.readlines()]
-layer_names = net.getLayerNames()
-output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
+output_layers = net.getUnconnectedOutLayersNames()
 colors = np.random.uniform(0, 255, size=(len(classes), 3))
 
 # Loading image
@@ -19,7 +18,9 @@ font = cv2.FONT_HERSHEY_PLAIN
 starting_time = time.time()
 frame_id = 0
 while True:
-    _, frame = cap.read()
+    ret, frame = cap.read()
+    if not ret or frame is None:
+        break
     frame_id += 1
 
     height, width, channels = frame.shape
@@ -43,12 +44,12 @@ while True:
                 # Object detected
                 center_x = int(detection[0] * width)
                 center_y = int(detection[1] * height)
-                w = int(detection[3] * width)
+                w = int(detection[2] * width)
                 h = int(detection[3] * height)
 
                 # Rectangle coordinates
-                x = int(center_x - w / 1.8)
-                y = int(center_y - h / 1.8)
+                x = int(center_x - w / 2)
+                y = int(center_y - h / 2)
 
                 boxes.append([x, y, w, h])
                 confidences.append(float(confidence))
