@@ -10,7 +10,7 @@ output_layers = net.getUnconnectedOutLayersNames()
 colors = np.random.uniform(0, 255, size=(len(classes), 3))
 
 # Loading image
-img = cv2.imread("src_room.jpg")
+img = cv2.imread("room.jpeg")
 img = cv2.resize(img, None, fx=0.8, fy=0.7)
 height, width, channels = img.shape
 

@@ -272,7 +272,7 @@ def interactive_menu():
         print("=" * 60)
         print("  [1] UK Road Traffic Video (uk.mp4)")
         print("  [2] USA Street Video (usa-street.mp4)")
-        print("  [3] Static Room Image (src_room.jpg)")
+        print("  [3] Static Room Image (room.jpeg)")
         print("  [4] Live Webcam Feed (DirectShow)")
         print("  [5] Browse Computer for Video / Image (File Picker Popup)")
         print(f"  [6] Switch Model [Current: {current_model.upper()}]")
@@ -286,7 +286,7 @@ def interactive_menu():
         elif choice == "2":
             run_detection(source="usa-street.mp4", model=current_model, loop=True)
         elif choice == "3":
-            run_detection(source="src_room.jpg", model=current_model, save=True)
+            run_detection(source="room.jpeg", model=current_model, save=True)
         elif choice == "4":
             run_detection(source="0", model=current_model)
         elif choice == "5":
