@@ -148,11 +148,20 @@ Open your browser and navigate to: **[http://localhost:8000](http://localhost:80
 
 ---
 
-## 📚 Documentation & Study Notes
+## 📚 Master Study Guide & Curriculum
 
-Comprehensive engineering and viva study guides are included in the repository:
-* 🎓 **[PROJECT_EXPLANATION_GUIDE.md](PROJECT_EXPLANATION_GUIDE.md)**: Student & lecturer study guide explaining how each component connects, the 5-step frame journey, real-world bug fixes, and top 10 viva questions with model answers.
-* 🧠 **[NOTION_STUDY_GUIDE.md](NOTION_STUDY_GUIDE.md)**: Masterclass 9-module technical textbook covering IoU derivations, ByteTrack Kalman filtering, CIoU loss, and concurrency patterns.
+This repository includes a textbook-grade 9-module comprehensive study guide formatted for direct 1-click import into Notion or markdown readers:
+
+* 🧠 **[NOTION_STUDY_GUIDE.md](NOTION_STUDY_GUIDE.md)**:
+  * **Module 1**: Computer Vision Fundamentals & Detection Hierarchy
+  * **Module 2**: Complete YOLO Evolution (v1 to YOLO11 Anchor-Free C2PSA Architecture)
+  * **Module 3**: Mathematics & Geometry (IoU, GIoU, CIoU derivations, Greedy NMS, Loss functions)
+  * **Module 4**: Multi-Object Tracking (MOT) & ByteTrack Deep Dive (Kalman filter state estimation, occlusion recovery)
+  * **Module 5**: OpenCV Low-Level Video Engineering & NVIDIA RTX 2050 CUDA Acceleration
+  * **Module 6**: Production Concurrency Design (Singleton Worker Thread, MJPEG Socket streaming)
+  * **Module 7**: Line-by-Line Codebase Walkthrough & Software Architecture Patterns
+  * **Module 8**: The Debugging Playbook (Real-world post-mortems for 7 production edge cases)
+  * **Module 9**: Computer Vision Technical Interview Question Bank (With staff-engineer-level model answers)
 
 ---
 

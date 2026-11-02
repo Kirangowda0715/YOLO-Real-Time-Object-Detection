@@ -15,6 +15,9 @@ Recording*.mp4
 *.mkv
 *.avi
 
+# Local guides
+PROJECT_EXPLANATION_GUIDE.md
+
 # Virtual environments
 venv/
 .env/
