@@ -290,6 +290,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Reset Tracking IDs to #1
+  const btnResetTrack = document.getElementById('btn-reset-track');
+  if (btnResetTrack) {
+    btnResetTrack.addEventListener('click', async () => {
+      try {
+        await fetch('/api/reset_tracks', { method: 'POST' });
+        btnResetTrack.style.borderColor = '#00ff88';
+        setTimeout(() => { btnResetTrack.style.borderColor = ''; }, 600);
+      } catch (err) {
+        console.error('Failed to reset tracks:', err);
+      }
+    });
+  }
+
   // Snapshot Download
   if (btnSnapshot) {
     btnSnapshot.addEventListener('click', () => {

@@ -80,6 +80,23 @@ class YOLODetector:
         self.output_layers = self.net.getUnconnectedOutLayersNames()
         print("Legacy model ready.")
 
+    def reset_tracker(self):
+        """
+        Resets ByteTrack tracking state and clears ID counter so tracks start from #1 again.
+        """
+        if self.engine == "ultralytics":
+            try:
+                from ultralytics.trackers.basetrack import BaseTrack
+                BaseTrack._count = 0
+            except Exception:
+                pass
+            try:
+                if hasattr(self.model, "predictor") and self.model.predictor is not None:
+                    if hasattr(self.model.predictor, "trackers"):
+                        self.model.predictor.trackers = []
+            except Exception:
+                pass
+
     def detect(self, frame, track=True):
         """
         Runs object detection (and tracking if available) on frame.

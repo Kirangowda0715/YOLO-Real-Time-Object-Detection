@@ -183,8 +183,12 @@ def run_detection(
     paused = False
     annotated = None
 
+    # Reset tracking state on start so IDs always begin from #1
+    detector.reset_tracker()
+
     print("\nKeyboard Controls in Video Window:")
     print("  [P]   - Pause / Resume")
+    print("  [R]   - Reset Tracking IDs to #1")
     print("  [S]   - Save Screenshot to output/")
     print("  [L]   - Toggle Video Looping")
     print("  [ESC] or [Q] - Exit")
@@ -195,6 +199,7 @@ def run_detection(
             if not ret or frame is None:
                 if not is_webcam and loop:
                     cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                    detector.reset_tracker()
                     start_time = time.time()
                     frame_count = 0
                     continue
@@ -248,6 +253,9 @@ def run_detection(
             break
         elif key in (ord("p"), ord("P")):
             paused = not paused
+        elif key in (ord("r"), ord("R")):
+            detector.reset_tracker()
+            print("-> Tracking IDs reset to #1.")
         elif key in (ord("s"), ord("S")):
             ss_name = f"screenshot_{int(time.time())}.jpg"
             ss_path = os.path.join(output_dir, ss_name)

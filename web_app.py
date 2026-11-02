@@ -183,9 +183,13 @@ class StreamManager:
         cached_counts = {}
 
         def open_source(stype, spath):
-            nonlocal cap, static_img, cached_annotated, cached_jpeg
+            nonlocal cap, static_img, cached_annotated, cached_jpeg, cached_detections, cached_counts
             cached_annotated = None
             cached_jpeg = None
+            cached_detections = []
+            cached_counts = {}
+            if self.detector:
+                self.detector.reset_tracker()
             if cap is not None:
                 try:
                     cap.release()
@@ -193,6 +197,9 @@ class StreamManager:
                     pass
                 cap = None
             static_img = None
+
+            if not os.path.isabs(spath) and stype != "webcam":
+                spath = os.path.abspath(spath)
 
             print(f"[Worker] Opening source: {stype} ({spath})")
             if stype == "webcam":
@@ -209,6 +216,9 @@ class StreamManager:
             elif stype == "image":
                 if os.path.exists(spath):
                     static_img = cv2.imread(spath)
+                    print(f"[Worker] Successfully loaded image {spath}, shape: {static_img.shape if static_img is not None else 'None'}")
+                else:
+                    print(f"[Worker Warning] Image file does not exist: {spath}")
 
         open_source(self.source_type, self.source_path)
 
@@ -249,8 +259,16 @@ class StreamManager:
             if current_type == "image":
                 if static_img is not None:
                     if cached_jpeg is not None:
-                        # Already inferred, simply wait and loop
-                        time.sleep(0.04)
+                        # Stream the cached annotated JPEG smoothly at 30 FPS without re-inferencing
+                        with self.lock:
+                            self.latest_jpeg = cached_jpeg
+                            self.annotated_frame = cached_annotated
+                            self.current_detections = cached_detections
+                            self.class_counts = cached_counts
+                            self.fps = 30.0
+                        with self.frame_condition:
+                            self.frame_condition.notify_all()
+                        time.sleep(0.033)
                         continue
                     frame = static_img.copy()
                 else:
@@ -263,6 +281,8 @@ class StreamManager:
                 if not ret or frame is None:
                     if loop and current_type == "video":
                         cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                        if detector:
+                            detector.reset_tracker()
                         ret, frame = cap.read()
                         if not ret or frame is None:
                             time.sleep(0.05)
@@ -288,11 +308,13 @@ class StreamManager:
 
             # YOLO Inference
             try:
-                detections, latency_ms = detector.detect(frame, track=tracking)
+                # Do NOT run motion tracking on static images
+                run_track = tracking if current_type != "image" else False
+                detections, latency_ms = detector.detect(frame, track=run_track)
                 annotated = detector.draw_detections(
                     frame,
                     detections,
-                    fps=self.fps,
+                    fps=self.fps if current_type != "image" else 30.0,
                     inference_time_ms=latency_ms,
                     show_hud=False,
                 )
@@ -328,6 +350,9 @@ class StreamManager:
 
                 if current_type == "image":
                     cached_jpeg = jpeg_bytes
+                    cached_annotated = annotated
+                    cached_detections = detections
+                    cached_counts = counts
 
                 # Notify all connected client stream generators
                 with self.frame_condition:
@@ -416,10 +441,18 @@ class SourcePayload(BaseModel):
 @app.post("/api/source")
 def set_source(payload: SourcePayload):
     target = payload.path
-    if payload.type == "video" and not os.path.isabs(target):
+    if payload.type != "webcam" and not os.path.isabs(target):
         target = os.path.abspath(target)
     stream_manager.change_source(payload.type, target)
     return {"status": "success", "source": target}
+
+
+@app.post("/api/reset_tracks")
+def reset_tracks():
+    """Resets tracking IDs back to #1."""
+    if stream_manager.detector:
+        stream_manager.detector.reset_tracker()
+    return {"status": "success", "message": "Tracking IDs reset to #1"}
 
 
 @app.post("/api/upload")
